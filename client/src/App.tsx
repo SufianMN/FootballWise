@@ -1,0 +1,25 @@
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import MainLayout from './layouts/MainLayout';
+import LandingPage from './pages/LandingPage';
+import PredictionPage from './pages/PredictionPage';
+import TeamAnalysisPage from './pages/TeamAnalysisPage';
+import TeamComparisonPage from './pages/TeamComparisonPage';
+import AboutPage from './pages/AboutPage';
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<MainLayout />}>
+          <Route index element={<LandingPage />} />
+          <Route path="predict" element={<PredictionPage />} />
+          <Route path="analysis" element={<TeamAnalysisPage />} />
+          <Route path="compare" element={<TeamComparisonPage />} />
+          <Route path="about" element={<AboutPage />} />
+        </Route>
+      </Routes>
+    </Router>
+  );
+}
+
+export default App;
