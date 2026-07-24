@@ -19,8 +19,8 @@ const MatchesPage: React.FC = () => {
     setLoading(true);
     try {
       const res = await searchMatches({ team, competition, page, sort, page_size: 20 });
-      setMatches(res.data.matches);
-      setTotal(res.data.total);
+      setMatches(res.data.data.matches);
+      setTotal(res.data.data.total);
     } catch (err) {
       console.error("Failed to load matches:", err);
     } finally {

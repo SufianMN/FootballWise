@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Activity, BarChart2, GitCompare, Info, Trophy, List } from 'lucide-react';
+import { Activity, BarChart2, GitCompare, Info, Trophy, List, User, Users } from 'lucide-react';
 
 const MainLayout: React.FC = () => {
   const location = useLocation();
@@ -9,8 +9,10 @@ const MainLayout: React.FC = () => {
     { name: 'Predict', path: '/predict', icon: <Activity size={18} /> },
     { name: 'League', path: '/league', icon: <Trophy size={18} /> },
     { name: 'Matches', path: '/matches', icon: <List size={18} /> },
-    { name: 'Analysis', path: '/analysis', icon: <BarChart2 size={18} /> },
-    { name: 'Compare', path: '/compare', icon: <GitCompare size={18} /> },
+    { name: 'Players', path: '/players', icon: <User size={18} /> },
+    { name: 'Player Compare', path: '/player-compare', icon: <Users size={18} /> },
+    { name: 'Team Analysis', path: '/analysis', icon: <BarChart2 size={18} /> },
+    { name: 'Team Compare', path: '/compare', icon: <GitCompare size={18} /> },
     { name: 'About', path: '/about', icon: <Info size={18} /> },
   ];
 

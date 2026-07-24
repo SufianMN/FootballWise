@@ -16,9 +16,9 @@ const TeamAnalysisPage: React.FC = () => {
     const fetchTeams = async () => {
       try {
         const response = await getTeams();
-        setTeams(response.data);
-        if (response.data.length > 0) {
-          setSelectedTeam(response.data[0].id);
+        setTeams(response.data.data);
+        if (response.data.data.length > 0) {
+          setSelectedTeam(response.data.data[0].id);
         }
       } catch (err) {
         console.error("Failed to load teams:", err);
@@ -33,7 +33,7 @@ const TeamAnalysisPage: React.FC = () => {
       setLoading(true);
       try {
         const response = await getTeamAnalytics(selectedTeam);
-        setAnalytics(response.data);
+        setAnalytics(response.data.data);
       } catch (err) {
         console.error("Failed to fetch team analytics:", err);
         setAnalytics(null);

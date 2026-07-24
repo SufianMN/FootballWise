@@ -15,7 +15,7 @@ const MatchDetailsPage: React.FC = () => {
       try {
         setLoading(true);
         const res = await getMatchDetails(parseInt(id));
-        setMatchData(res.data);
+        setMatchData(res.data.data);
       } catch (err) {
         console.error("Failed to load match details:", err);
       } finally {

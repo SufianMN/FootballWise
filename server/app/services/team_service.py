@@ -99,4 +99,11 @@ class TeamService:
         
         return stats
 
+    def get_team_analytics(self, team_id: str):
+        from .analytics_service import analytics_service
+        # We also need to ensure it's loaded if not already
+        if analytics_service.df_logs is None:
+            analytics_service.load_data()
+        return analytics_service.get_team_analytics(team_id)
+
 team_service = TeamService()

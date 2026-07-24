@@ -23,10 +23,10 @@ const PredictionPage: React.FC = () => {
     const fetchTeams = async () => {
       try {
         const response = await getTeams();
-        setTeams(response.data);
-        if (response.data.length >= 2) {
-          setHomeTeam(response.data[0].id);
-          setAwayTeam(response.data[1].id);
+        setTeams(response.data.data);
+        if (response.data.data.length >= 2) {
+          setHomeTeam(response.data.data[0].id);
+          setAwayTeam(response.data.data[1].id);
         }
       } catch (err) {
         console.error("Failed to load teams:", err);
@@ -48,7 +48,7 @@ const PredictionPage: React.FC = () => {
     
     try {
       const response = await predictMatch({ home_team: homeTeam, away_team: awayTeam });
-      const data = response.data;
+      const data = response.data.data;
       
       setPrediction({
         homeWin: Math.round(data.home_win_probability * 100),

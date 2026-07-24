@@ -16,9 +16,9 @@ const LeaguePage: React.FC = () => {
     const fetchComps = async () => {
       try {
         const response = await getCompetitions();
-        setCompetitions(response.data);
-        if (response.data.length > 0) {
-          setSelectedComp(response.data[0].id);
+        setCompetitions(response.data.data);
+        if (response.data.data.length > 0) {
+          setSelectedComp(response.data.data[0].id);
         }
       } catch (err) {
         console.error("Failed to load competitions:", err);
@@ -33,7 +33,7 @@ const LeaguePage: React.FC = () => {
       setLoading(true);
       try {
         const response = await getLeagueAnalytics(selectedComp);
-        setLeagueData(response.data);
+        setLeagueData(response.data.data);
       } catch (err) {
         console.error("Failed to fetch league analytics:", err);
         setLeagueData(null);

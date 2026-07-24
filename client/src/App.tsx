@@ -7,6 +7,9 @@ import TeamComparisonPage from './pages/TeamComparisonPage';
 import LeaguePage from './pages/LeaguePage';
 import MatchesPage from './pages/MatchesPage';
 import MatchDetailsPage from './pages/MatchDetailsPage';
+import PlayersPage from './pages/PlayersPage';
+import PlayerDetailsPage from './pages/PlayerDetailsPage';
+import PlayerComparePage from './pages/PlayerComparePage';
 import AboutPage from './pages/AboutPage';
 
 function App() {
@@ -19,6 +22,9 @@ function App() {
           <Route path="league" element={<LeaguePage />} />
           <Route path="matches" element={<MatchesPage />} />
           <Route path="match/:id" element={<MatchDetailsPage />} />
+          <Route path="players" element={<PlayersPage />} />
+          <Route path="player/:id" element={<PlayerDetailsPage />} />
+          <Route path="player-compare" element={<PlayerComparePage />} />
           <Route path="analysis" element={<TeamAnalysisPage />} />
           <Route path="compare" element={<TeamComparisonPage />} />
           <Route path="about" element={<AboutPage />} />

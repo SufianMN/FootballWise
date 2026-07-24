@@ -10,6 +10,10 @@ class PredictionService:
         self.feature_columns = None
         self.dataset_df = None
 
+    def load_model(self):
+        """Wrapper to maintain backward compatibility."""
+        self.load_artifacts()
+
     def load_artifacts(self):
         base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../ml"))
         models_dir = os.path.join(base_dir, "models")

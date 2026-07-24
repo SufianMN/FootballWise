@@ -16,10 +16,10 @@ const TeamComparisonPage: React.FC = () => {
     const fetchTeams = async () => {
       try {
         const response = await getTeams();
-        setTeams(response.data);
-        if (response.data.length >= 2) {
-          setTeamAId(response.data[0].id);
-          setTeamBId(response.data[1].id);
+        setTeams(response.data.data);
+        if (response.data.data.length >= 2) {
+          setTeamAId(response.data.data[0].id);
+          setTeamBId(response.data.data[1].id);
         }
       } catch (err) {
         console.error("Failed to load teams:", err);
@@ -34,7 +34,7 @@ const TeamComparisonPage: React.FC = () => {
       setLoadingA(true);
       try {
         const res = await getTeamStats(teamAId);
-        setTeamAStats(res.data);
+        setTeamAStats(res.data.data);
       } catch (err) {
         setTeamAStats(null);
       } finally {
@@ -50,7 +50,7 @@ const TeamComparisonPage: React.FC = () => {
       setLoadingB(true);
       try {
         const res = await getTeamStats(teamBId);
-        setTeamBStats(res.data);
+        setTeamBStats(res.data.data);
       } catch (err) {
         setTeamBStats(null);
       } finally {
