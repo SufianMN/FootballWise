@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { getTeams, getTeamStats } from '../api';
+import SearchableTeamSelect from '../components/SearchableTeamSelect/SearchableTeamSelect';
 
 const TeamComparisonPage: React.FC = () => {
   const [teams, setTeams] = useState<{ id: string; name: string }[]>([]);
@@ -79,23 +80,25 @@ const TeamComparisonPage: React.FC = () => {
       <h2 className="text-3xl font-bold text-white mb-8">Team Comparison</h2>
       
       <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 bg-surface p-4 rounded-xl border border-slate-700 shadow-md">
-        <select 
-          value={teamAId}
-          onChange={(e) => setTeamAId(e.target.value)}
-          className="w-full md:w-auto bg-background border border-slate-600 rounded-lg p-3 text-white focus:border-primary outline-none"
-        >
-          {teams.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
-        </select>
+        <div className="w-full md:w-1/3">
+          <SearchableTeamSelect 
+            teams={teams}
+            value={teamAId}
+            onChange={(id) => setTeamAId(id)}
+            placeholder="Search Team A..."
+          />
+        </div>
         <div className="text-textSecondary font-bold bg-background px-4 py-2 rounded-full border border-slate-700 shadow-inner">
           VS
         </div>
-        <select 
-          value={teamBId}
-          onChange={(e) => setTeamBId(e.target.value)}
-          className="w-full md:w-auto bg-background border border-slate-600 rounded-lg p-3 text-white focus:border-primary outline-none"
-        >
-          {teams.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
-        </select>
+        <div className="w-full md:w-1/3">
+          <SearchableTeamSelect 
+            teams={teams}
+            value={teamBId}
+            onChange={(id) => setTeamBId(id)}
+            placeholder="Search Team B..."
+          />
+        </div>
       </div>
 
       <div className="bg-surface p-6 rounded-xl border border-slate-700 h-[500px] shadow-lg animate-fade-in relative">

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getTeams, getTeamAnalytics } from '../api';
+import SearchableTeamSelect from '../components/SearchableTeamSelect/SearchableTeamSelect';
 import { 
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   BarChart, Bar, Cell
@@ -78,15 +79,14 @@ const TeamAnalysisPage: React.FC = () => {
     <div className="max-w-7xl mx-auto py-8 px-4 animate-fade-in">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <h2 className="text-3xl font-bold text-white">Team Analytics Dashboard</h2>
-        <select 
-          value={selectedTeam}
-          onChange={(e) => setSelectedTeam(e.target.value)}
-          className="bg-surface border border-slate-600 rounded-lg p-3 text-white min-w-[250px] outline-none focus:border-primary shadow-lg"
-        >
-          {teams.map(team => (
-            <option key={team.id} value={team.id}>{team.name}</option>
-          ))}
-        </select>
+        <div className="w-full md:w-auto min-w-[250px] shadow-lg">
+          <SearchableTeamSelect 
+            teams={teams}
+            value={selectedTeam}
+            onChange={(id) => setSelectedTeam(id)}
+            placeholder="Search team..."
+          />
+        </div>
       </div>
 
       {/* SECTION 1: Overview Cards */}

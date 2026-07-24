@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getTeams, predictMatch } from '../api';
+import SearchableTeamSelect from '../components/SearchableTeamSelect/SearchableTeamSelect';
 
 const PredictionPage: React.FC = () => {
   const [teams, setTeams] = useState<{ id: string; name: string }[]>([]);
@@ -79,27 +80,21 @@ const PredictionPage: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           <div>
             <label className="block text-textSecondary mb-2">Home Team</label>
-            <select 
-              value={homeTeam} 
-              onChange={(e) => setHomeTeam(e.target.value)}
-              className="w-full bg-background border border-slate-600 rounded-lg p-3 text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors"
-            >
-              {teams.map(team => (
-                <option key={team.id} value={team.id}>{team.name}</option>
-              ))}
-            </select>
+            <SearchableTeamSelect 
+              teams={teams}
+              value={homeTeam}
+              onChange={(id) => setHomeTeam(id)}
+              placeholder="Search home team..."
+            />
           </div>
           <div>
             <label className="block text-textSecondary mb-2">Away Team</label>
-            <select 
-              value={awayTeam} 
-              onChange={(e) => setAwayTeam(e.target.value)}
-              className="w-full bg-background border border-slate-600 rounded-lg p-3 text-white focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors"
-            >
-              {teams.map(team => (
-                <option key={team.id} value={team.id}>{team.name}</option>
-              ))}
-            </select>
+            <SearchableTeamSelect 
+              teams={teams}
+              value={awayTeam}
+              onChange={(id) => setAwayTeam(id)}
+              placeholder="Search away team..."
+            />
           </div>
         </div>
         <button 
