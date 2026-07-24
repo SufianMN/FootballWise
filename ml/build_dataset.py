@@ -28,7 +28,7 @@ def run_pipeline():
 
 def validate_dataset():
     print("="*50)
-    print("Dataset Validation")
+    print("Dataset Validation & Cleaning")
     print("="*50)
     
     filepath = os.path.join(FEATURES_DIR, "match_dataset.csv")
@@ -38,13 +38,35 @@ def validate_dataset():
         
     df = pd.read_csv(filepath)
     
-    print(f"Total number of matches: {len(df)}")
+    # 1. Handle Duplicates
+    initial_len = len(df)
+    df = df.drop_duplicates(subset=['match_id'])
+    duplicates_removed = initial_len - len(df)
+    
+    # 2. Handle missing values
+    missing = df.isnull().sum().sum()
+    if missing > 0:
+        df = df.fillna(0) # safe imputation for rolling features
+        
+    # Save cleaned dataset back
+    df.to_csv(filepath, index=False)
+    
+    # Calculate metrics
+    num_comps = df['competition_id'].nunique() if 'competition_id' in df.columns else 0
+    num_seasons = df['season_id'].nunique() if 'season_id' in df.columns else 0
+    num_matches = len(df)
     
     features = [c for c in df.columns if c not in ['match_id', 'match_date', 'home_team_id', 'away_team_id', 'competition_id', 'season_id', 'result']]
+    
+    print(f"Total Competitions: {num_comps}")
+    print(f"Total Seasons: {num_seasons}")
+    print(f"Total Matches: {num_matches}")
+    print(f"Duplicate matches removed: {duplicates_removed}")
+    print(f"Missing values handled: {missing}")
     print(f"Number of features: {len(features)}")
     
-    missing = df.isnull().sum().sum()
-    print(f"Total missing values: {missing}")
+    print("\nClass Distribution:")
+    print(df['result'].value_counts(normalize=True).mul(100).round(2).astype(str) + '%')
     
     print("\nFeature Names:")
     # Group by prefix to make it readable

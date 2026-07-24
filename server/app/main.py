@@ -1,7 +1,12 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List
+
+from .services.prediction_service import prediction_service
+from .services.team_service import team_service
+from .services.explainability_service import explainability_service
+from .services.analytics_service import analytics_service
 
 app = FastAPI(title="FootballWise API")
 
@@ -13,56 +18,55 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.on_event("startup")
+def startup_event():
+    print("Initializing FootballWise API...")
+    prediction_service.load_artifacts()
+    team_service.load_data()
+    analytics_service.load_data()
+    if prediction_service.model is not None:
+        explainability_service.initialize(prediction_service.model)
+    print("Services successfully loaded.")
+
 class PredictRequest(BaseModel):
     home_team: str
     away_team: str
-    competition: str
-    season: str
 
 @app.get("/")
 def read_root():
     return {
         "status": "ok",
-        "service": "FootballWise API"
+        "service": "FootballWise API",
+        "model_loaded": prediction_service.model is not None
     }
 
 @app.get("/teams")
 def get_teams():
-    return [
-        {"id": "t1", "name": "Arsenal"},
-        {"id": "t2", "name": "Manchester City"},
-        {"id": "t3", "name": "Real Madrid"},
-        {"id": "t4", "name": "Barcelona"}
-    ]
-
-@app.get("/competitions")
-def get_competitions():
-    return [
-        {"id": "c1", "name": "Premier League"},
-        {"id": "c2", "name": "La Liga"},
-        {"id": "c3", "name": "Champions League"}
-    ]
+    teams = team_service.get_all_teams()
+    if not teams:
+        raise HTTPException(status_code=500, detail="Failed to load teams")
+    return teams
 
 @app.post("/predict")
 def predict_match(request: PredictRequest):
-    return {
-        "home_win_probability": 0.61,
-        "draw_probability": 0.22,
-        "away_win_probability": 0.17,
-        "predicted_score": "2-1"
-    }
+    try:
+        res = prediction_service.predict(request.home_team, request.away_team)
+        return res
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Prediction error: {str(e)}")
 
 @app.get("/team/{team_id}")
 def get_team(team_id: str):
-    # Mock statistics
-    return {
-        "id": team_id,
-        "goals": 45,
-        "xg": 42.5,
-        "possession": 55.2,
-        "passing_accuracy": 88.4,
-        "defensive_rating": 7.5,
-        "recent_form": ["W", "D", "W", "W", "L"],
-        "shots": 210,
-        "pressing": 45.3
-    }
+    stats = team_service.get_team_stats(team_id)
+    if not stats:
+        raise HTTPException(status_code=404, detail="Team not found or lacks historical data")
+    return stats
+
+@app.get("/team/{team_id}/analytics")
+def get_team_analytics(team_id: str):
+    data = analytics_service.get_team_analytics(team_id)
+    if not data:
+        raise HTTPException(status_code=404, detail="Analytics data not found for team")
+    return data

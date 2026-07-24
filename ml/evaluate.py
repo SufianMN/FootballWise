@@ -59,8 +59,8 @@ def plot_feature_importance(model, feature_names):
     # Sort features by importance
     indices = np.argsort(importances)[::-1]
     
-    # Select top 15 (or all if < 15)
-    top_n = min(15, len(feature_names))
+    # Select top 25 (or all if < 25)
+    top_n = min(25, len(feature_names))
     top_indices = indices[:top_n]
     top_importances = importances[top_indices]
     top_features = [feature_names[i] for i in top_indices]
@@ -72,9 +72,9 @@ def plot_feature_importance(model, feature_names):
         print(f"{i+1}. {top_features[i]} ({top_importances[i]:.4f})")
     
     # Plot
-    plt.figure(figsize=(10, 8))
+    plt.figure(figsize=(12, 10))
     sns.barplot(x=top_importances, y=top_features, hue=top_features, legend=False, palette="viridis")
-    plt.title("Top 15 Feature Importances (XGBoost)")
+    plt.title("Top 25 Feature Importances (XGBoost)")
     plt.xlabel("Importance Score")
     plt.ylabel("Features")
     plt.tight_layout()
