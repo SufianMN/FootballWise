@@ -1,12 +1,13 @@
 import React from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Activity, BarChart2, GitCompare, Info } from 'lucide-react';
+import { Activity, BarChart2, GitCompare, Info, Trophy } from 'lucide-react';
 
 const MainLayout: React.FC = () => {
   const location = useLocation();
 
   const navLinks = [
     { name: 'Predict', path: '/predict', icon: <Activity size={18} /> },
+    { name: 'League', path: '/league', icon: <Trophy size={18} /> },
     { name: 'Analysis', path: '/analysis', icon: <BarChart2 size={18} /> },
     { name: 'Compare', path: '/compare', icon: <GitCompare size={18} /> },
     { name: 'About', path: '/about', icon: <Info size={18} /> },

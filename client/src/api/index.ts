@@ -10,5 +10,6 @@ export const predictMatch = (data: { home_team: string; away_team: string }) =>
   api.post('/predict', data);
 export const getTeamStats = (id: string) => api.get(`/team/${id}`);
 export const getTeamAnalytics = (id: string) => api.get(`/team/${id}/analytics`);
+export const getLeagueAnalytics = (id: string) => api.get(`/league/${id}`);
 
 export default api;

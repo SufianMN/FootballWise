@@ -39,6 +39,8 @@ class TeamService:
         # Sort alphabetically
         return sorted(teams, key=lambda x: x["name"])
 
+    
+
     def get_team_stats(self, team_id: str):
         if not self.dataset_df is not None:
             return None

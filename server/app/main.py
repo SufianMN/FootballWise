@@ -7,6 +7,7 @@ from .services.prediction_service import prediction_service
 from .services.team_service import team_service
 from .services.explainability_service import explainability_service
 from .services.analytics_service import analytics_service
+from .services.league_service import league_service
 
 app = FastAPI(title="FootballWise API")
 
@@ -24,6 +25,7 @@ def startup_event():
     prediction_service.load_artifacts()
     team_service.load_data()
     analytics_service.load_data()
+    league_service.load_data()
     if prediction_service.model is not None:
         explainability_service.initialize(prediction_service.model)
     print("Services successfully loaded.")
@@ -42,20 +44,26 @@ def read_root():
 
 @app.get("/teams")
 def get_teams():
-    teams = team_service.get_all_teams()
-    if not teams:
-        raise HTTPException(status_code=500, detail="Failed to load teams")
-    return teams
+    return team_service.get_all_teams()
+
+@app.get("/competitions")
+def get_competitions():
+    return league_service.get_competitions()
+
+@app.get("/league/{competition_id}")
+def get_league_analytics(competition_id: str):
+    data = league_service.get_league_analytics(competition_id)
+    if not data:
+        raise HTTPException(status_code=404, detail="League data not found")
+    return data
 
 @app.post("/predict")
-def predict_match(request: PredictRequest):
+def predict(request: PredictRequest):
     try:
-        res = prediction_service.predict(request.home_team, request.away_team)
-        return res
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        result = prediction_service.predict(request.home_team, request.away_team)
+        return result
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Prediction error: {str(e)}")
+        raise HTTPException(status_code=400, detail=str(e))
 
 @app.get("/team/{team_id}")
 def get_team(team_id: str):

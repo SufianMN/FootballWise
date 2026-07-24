@@ -4,6 +4,7 @@ import LandingPage from './pages/LandingPage';
 import PredictionPage from './pages/PredictionPage';
 import TeamAnalysisPage from './pages/TeamAnalysisPage';
 import TeamComparisonPage from './pages/TeamComparisonPage';
+import LeaguePage from './pages/LeaguePage';
 import AboutPage from './pages/AboutPage';
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
         <Route path="/" element={<MainLayout />}>
           <Route index element={<LandingPage />} />
           <Route path="predict" element={<PredictionPage />} />
+          <Route path="league" element={<LeaguePage />} />
           <Route path="analysis" element={<TeamAnalysisPage />} />
           <Route path="compare" element={<TeamComparisonPage />} />
           <Route path="about" element={<AboutPage />} />
