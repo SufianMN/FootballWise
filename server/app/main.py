@@ -8,6 +8,8 @@ from .services.team_service import team_service
 from .services.explainability_service import explainability_service
 from .services.analytics_service import analytics_service
 from .services.league_service import league_service
+from .services.match_service import match_service
+from typing import Optional
 
 app = FastAPI(title="FootballWise API")
 
@@ -26,13 +28,10 @@ def startup_event():
     team_service.load_data()
     analytics_service.load_data()
     league_service.load_data()
+    match_service.load_data()
     if prediction_service.model is not None:
         explainability_service.initialize(prediction_service.model)
     print("Services successfully loaded.")
-
-class PredictRequest(BaseModel):
-    home_team: str
-    away_team: str
 
 @app.get("/")
 def read_root():
@@ -57,6 +56,21 @@ def get_league_analytics(competition_id: str):
         raise HTTPException(status_code=404, detail="League data not found")
     return data
 
+@app.get("/matches")
+def get_matches(competition: Optional[str] = None, season: Optional[str] = None, team: Optional[str] = None, date: Optional[str] = None, page: int = 1, page_size: int = 20, sort: str = "desc"):
+    return match_service.search_matches(competition, season, team, date, page, page_size, sort)
+
+@app.get("/match/{match_id}")
+def get_match_details(match_id: int):
+    data = match_service.get_match_details(match_id)
+    if not data:
+        raise HTTPException(status_code=404, detail="Match not found")
+    return data
+
+class PredictRequest(BaseModel):
+    home_team: str
+    away_team: str
+
 @app.post("/predict")
 def predict(request: PredictRequest):
     try:
@@ -64,7 +78,7 @@ def predict(request: PredictRequest):
         return result
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
-
+        
 @app.get("/team/{team_id}")
 def get_team(team_id: str):
     stats = team_service.get_team_stats(team_id)

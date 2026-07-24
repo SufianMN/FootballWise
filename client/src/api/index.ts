@@ -11,5 +11,7 @@ export const predictMatch = (data: { home_team: string; away_team: string }) =>
 export const getTeamStats = (id: string) => api.get(`/team/${id}`);
 export const getTeamAnalytics = (id: string) => api.get(`/team/${id}/analytics`);
 export const getLeagueAnalytics = (id: string) => api.get(`/league/${id}`);
+export const searchMatches = (params: any) => api.get('/matches', { params });
+export const getMatchDetails = (id: number) => api.get(`/match/${id}`);
 
 export default api;
