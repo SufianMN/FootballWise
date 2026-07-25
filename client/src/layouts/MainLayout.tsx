@@ -26,19 +26,19 @@ const MainLayout: React.FC = () => {
             </div>
             <span className="text-xl font-bold text-white tracking-tight">FootballWise</span>
           </Link>
-          <nav className="hidden md:flex items-center gap-6">
+          <nav className="hidden lg:flex items-center gap-1 xl:gap-3">
             {navLinks.map((link) => (
               <Link 
                 key={link.name} 
                 to={link.path}
-                className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md transition-colors text-sm ${
                   location.pathname === link.path 
-                    ? 'text-primary bg-slate-800/50' 
-                    : 'text-textSecondary hover:text-white hover:bg-slate-800/30'
+                    ? 'text-primary bg-slate-800/50 font-semibold' 
+                    : 'text-textSecondary hover:text-white hover:bg-slate-800/30 font-medium'
                 }`}
               >
                 {link.icon}
-                <span className="font-medium">{link.name}</span>
+                <span>{link.name}</span>
               </Link>
             ))}
           </nav>
