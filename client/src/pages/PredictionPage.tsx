@@ -15,6 +15,8 @@ const PredictionPage: React.FC = () => {
     awayWin: number;
     result: string;
     confidence: number;
+    confidenceLevel: string;
+    matchPreview: any;
     top_features: { feature: string; value: number; impact: number; direction: 'positive' | 'negative' | 'neutral' }[];
     insights: string[];
   } | null>(null);
@@ -37,14 +39,15 @@ const PredictionPage: React.FC = () => {
   }, []);
 
   const handlePredict = async () => {
+    if (!homeTeam || !awayTeam) return;
     if (homeTeam === awayTeam) {
       setError("Home and Away teams must be different.");
+      setPrediction(null);
       return;
     }
     
     setError(null);
     setLoading(true);
-    setPrediction(null);
     
     try {
       const response = await predictMatch({ home_team: homeTeam, away_team: awayTeam });
@@ -56,15 +59,24 @@ const PredictionPage: React.FC = () => {
         awayWin: Math.round(data.away_win_probability * 100),
         result: data.predicted_result,
         confidence: data.confidence,
+        confidenceLevel: data.confidence_level,
+        matchPreview: data.match_preview,
         top_features: data.top_features || [],
         insights: data.insights || []
       });
     } catch (err: any) {
       setError(err.response?.data?.detail || "An error occurred during prediction.");
+      setPrediction(null);
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (homeTeam && awayTeam && homeTeam !== awayTeam) {
+      handlePredict();
+    }
+  }, [homeTeam, awayTeam]);
 
   return (
     <div className="max-w-4xl mx-auto py-8 px-4">
@@ -97,26 +109,68 @@ const PredictionPage: React.FC = () => {
             />
           </div>
         </div>
-        <button 
-          onClick={handlePredict}
-          disabled={loading || teams.length === 0}
-          className="w-full bg-primary hover:bg-blue-600 disabled:bg-slate-600 text-white font-bold py-4 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
-        >
-          {loading ? (
-            <>
-              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-              Analyzing Matchup...
-            </>
-          ) : "Generate Prediction"}
-        </button>
+        {loading && (
+          <div className="w-full bg-primary/20 text-primary py-4 rounded-lg flex items-center justify-center gap-2">
+            <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+            Analyzing Matchup...
+          </div>
+        )}
       </div>
 
       {prediction && (
         <div className="space-y-6 animate-fade-in">
+          
+          {/* Match Preview Section */}
+          <div className="bg-surface p-6 rounded-xl border border-slate-700 shadow-xl">
+            <h4 className="text-lg font-bold text-white mb-6 border-b border-slate-600 pb-2">Match Preview (Last 5 Matches)</h4>
+            
+            <div className="grid grid-cols-3 text-center gap-4 mb-6 items-center">
+              <div>
+                <div className="text-sm text-textSecondary mb-1">Recent Form</div>
+                <div className="font-mono text-lg tracking-widest text-emerald-400">{prediction.matchPreview.home_form}</div>
+              </div>
+              <div className="text-slate-500 font-bold text-lg">VS</div>
+              <div>
+                <div className="text-sm text-textSecondary mb-1">Recent Form</div>
+                <div className="font-mono text-lg tracking-widest text-blue-400">{prediction.matchPreview.away_form}</div>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="grid grid-cols-3 text-center items-center">
+                <div className="text-xl font-bold text-white">{prediction.matchPreview.home_avg_goals}</div>
+                <div className="text-sm text-textSecondary uppercase tracking-wider">Avg Goals</div>
+                <div className="text-xl font-bold text-white">{prediction.matchPreview.away_avg_goals}</div>
+              </div>
+              
+              <div className="grid grid-cols-3 text-center items-center">
+                <div className="text-xl font-bold text-slate-300">{prediction.matchPreview.home_avg_xg}</div>
+                <div className="text-sm text-textSecondary uppercase tracking-wider">Expected Goals (xG)</div>
+                <div className="text-xl font-bold text-slate-300">{prediction.matchPreview.away_avg_xg}</div>
+              </div>
+              
+              <div className="grid grid-cols-3 text-center items-center">
+                <div className="text-xl font-bold text-emerald-400">{prediction.matchPreview.home_clean_sheets}</div>
+                <div className="text-sm text-textSecondary uppercase tracking-wider">Clean Sheets</div>
+                <div className="text-xl font-bold text-emerald-400">{prediction.matchPreview.away_clean_sheets}</div>
+              </div>
+            </div>
+            
+            <div className="mt-6 pt-4 border-t border-slate-700 grid grid-cols-3 text-center items-center">
+              <div className="text-2xl font-black text-blue-400">{prediction.matchPreview.h2h_home_wins}</div>
+              <div className="text-sm text-textSecondary uppercase tracking-wider">Head-to-Head Wins</div>
+              <div className="text-2xl font-black text-red-400">{prediction.matchPreview.h2h_away_wins}</div>
+            </div>
+          </div>
+
           {/* Main Prediction Card */}
           <div className="bg-surface p-8 rounded-xl border border-slate-700 shadow-xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 bg-primary/20 text-primary px-4 py-1 rounded-bl-lg font-semibold text-sm border-b border-l border-primary/30">
-              {prediction.confidence}% Confidence
+            <div className={`absolute top-0 right-0 px-4 py-1 rounded-bl-lg font-semibold text-sm border-b border-l
+              ${prediction.confidenceLevel === 'Very High' ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : 
+                prediction.confidenceLevel === 'High' ? 'bg-blue-500/20 text-blue-400 border-blue-500/30' : 
+                prediction.confidenceLevel === 'Medium' ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' : 
+                'bg-red-500/20 text-red-400 border-red-500/30'}`}>
+              {prediction.confidence}% Confidence ({prediction.confidenceLevel})
             </div>
             
             <h3 className="text-xl font-bold mb-8 text-center text-slate-300">Prediction Results</h3>

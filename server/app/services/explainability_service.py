@@ -8,7 +8,13 @@ class ExplainabilityService:
     def initialize(self, model):
         # Initialize the SHAP TreeExplainer with the trained XGBoost model
         print("Initializing SHAP TreeExplainer...")
-        self.explainer = shap.TreeExplainer(model)
+        
+        # Handle CalibratedClassifierCV wrappers
+        base_model = model
+        if hasattr(model, 'calibrated_classifiers_'):
+            base_model = model.calibrated_classifiers_[0].estimator
+            
+        self.explainer = shap.TreeExplainer(base_model)
         print("SHAP explainer loaded successfully.")
 
     def generate_explanations(self, feature_vector_df, predicted_class_idx, feature_names):

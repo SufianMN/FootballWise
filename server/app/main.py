@@ -24,6 +24,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from .services.feature_builder_service import feature_builder_service
+
 @app.on_event("startup")
 async def startup_event():
     """Load all necessary data when the server starts."""
@@ -31,6 +33,7 @@ async def startup_event():
     league_service.load_data()
     match_service.load_data()
     player_service.load_data()
+    feature_builder_service.load_data()
     prediction_service.load_model()
     if prediction_service.model is not None:
         explainability_service.initialize(prediction_service.model)
@@ -62,6 +65,8 @@ def get_team_analytics(team_id: str):
     if not analytics:
         raise HTTPException(status_code=404, detail="Team analytics not found")
     return {"data": convert_numpy_types(analytics)}
+
+
 
 # --- League Endpoints ---
 
