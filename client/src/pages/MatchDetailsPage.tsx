@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getMatchDetails } from '../api';
-import { ChevronLeft, Calendar, MapPin, Clock, Trophy, AlertCircle } from 'lucide-react';
+import { ChevronLeft, Calendar, Clock, Trophy, AlertCircle } from 'lucide-react';
 
 const MatchDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();

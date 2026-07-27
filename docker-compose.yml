@@ -1,0 +1,23 @@
+services:
+  frontend:
+    build:
+      context: ./client
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./ml:/ml
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8000
+      - MODEL_DIRECTORY=/ml/models
+      - DATA_DIRECTORY=/ml/data
+      - LOG_LEVEL=INFO

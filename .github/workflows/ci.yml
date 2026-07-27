@@ -1,0 +1,54 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  backend-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Backend Dependencies
+        run: |
+          cd server
+          pip install -r requirements.txt
+          pip install black isort flake8
+
+      - name: Run Backend Validation
+        run: |
+          cd server
+          flake8 app
+          black --check app
+          isort --check-only app
+
+  frontend-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Frontend Dependencies
+        run: |
+          cd client
+          npm install --legacy-peer-deps
+
+      - name: Run Frontend Lint and Build
+        run: |
+          cd client
+          npm run lint
+          npm run build

@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def convert_numpy_types(obj):
     """
     Recursively converts NumPy scalar types into native Python types.

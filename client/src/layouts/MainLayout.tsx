@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Activity, BarChart2, GitCompare, Info, Trophy, List, User, Users, Play, LineChart, History, Shield } from 'lucide-react';
+import { Activity, BarChart2, GitCompare, Info, Trophy, List, User, Users } from 'lucide-react';
 
 const MainLayout: React.FC = () => {
   const location = useLocation();

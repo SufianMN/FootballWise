@@ -1,16 +1,22 @@
-from fastapi import FastAPI, HTTPException, Query
+import time
+from typing import Optional
+
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import List, Optional
-import uvicorn
-import traceback
 
-from .services.team_service import team_service
-from .services.prediction_service import prediction_service
+from app.core.logger import get_logger
+
+logger = get_logger(__name__)
+
+start_time = time.time()
+
 from .services.explainability_service import explainability_service
 from .services.league_service import league_service
 from .services.match_service import match_service
 from .services.player_service import player_service
+from .services.prediction_service import prediction_service
+from .services.team_service import team_service
 from .utils.helpers import convert_numpy_types
 
 app = FastAPI(title="FootballWise API")
@@ -18,13 +24,16 @@ app = FastAPI(title="FootballWise API")
 # Add CORS middleware to allow React frontend to communicate with FastAPI
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, specify frontend URL e.g. ["http://localhost:3000"]
+    allow_origins=[
+        "*"
+    ],  # In production, specify frontend URL e.g. ["http://localhost:3000"]
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 from .services.feature_builder_service import feature_builder_service
+
 
 @app.on_event("startup")
 async def startup_event():
@@ -38,17 +47,36 @@ async def startup_event():
     if prediction_service.model is not None:
         explainability_service.initialize(prediction_service.model)
 
+
 @app.get("/")
 def read_root():
     return {"message": "Welcome to FootballWise API"}
 
+
+@app.get("/health")
+def health_check():
+    """Return health status of the API and loaded services."""
+    uptime = time.time() - start_time
+    return {
+        "status": "healthy",
+        "model_loaded": prediction_service.model is not None,
+        "dataset_loaded": feature_builder_service.dataset_df is not None,
+        "teams_loaded": len(team_service.teams_df) > 0,
+        "players_loaded": not player_service.players_df.empty,
+        "league_loaded": not league_service.df_league.empty,
+        "uptime_seconds": int(uptime),
+    }
+
+
 # --- Team Endpoints ---
+
 
 @app.get("/teams")
 def get_teams():
     """Return a list of all available teams."""
     teams = team_service.get_all_teams()
     return {"data": convert_numpy_types(teams)}
+
 
 @app.get("/team/{team_id}")
 def get_team_stats(team_id: str):
@@ -57,6 +85,7 @@ def get_team_stats(team_id: str):
     if not stats:
         raise HTTPException(status_code=404, detail="Team not found")
     return {"data": convert_numpy_types(stats)}
+
 
 @app.get("/team/{team_id}/analytics")
 def get_team_analytics(team_id: str):
@@ -67,14 +96,15 @@ def get_team_analytics(team_id: str):
     return {"data": convert_numpy_types(analytics)}
 
 
-
 # --- League Endpoints ---
+
 
 @app.get("/competitions")
 def get_competitions():
     """Return a list of all available competitions."""
     competitions = league_service.get_competitions()
     return {"data": convert_numpy_types(competitions)}
+
 
 @app.get("/league/{competition_id}")
 def get_league_analytics(competition_id: str):
@@ -84,7 +114,9 @@ def get_league_analytics(competition_id: str):
         raise HTTPException(status_code=404, detail="Competition not found")
     return {"data": convert_numpy_types(analytics)}
 
+
 # --- Match Endpoints ---
+
 
 @app.get("/matches")
 def get_matches(
@@ -94,19 +126,20 @@ def get_matches(
     date: Optional[str] = None,
     sort: Optional[str] = "desc",
     page: int = 1,
-    page_size: int = 20
+    page_size: int = 20,
 ):
     """Return a paginated, filtered list of historical matches."""
     result = match_service.search_matches(
-        team=team, 
-        competition=competition, 
-        season=season, 
-        date=date, 
-        sort=sort, 
-        page=page, 
-        page_size=page_size
+        team=team,
+        competition=competition,
+        season=season,
+        date=date,
+        sort=sort,
+        page=page,
+        page_size=page_size,
     )
     return {"data": convert_numpy_types(result)}
+
 
 @app.get("/match/{match_id}")
 def get_match_details(match_id: int):
@@ -116,7 +149,9 @@ def get_match_details(match_id: int):
         raise HTTPException(status_code=404, detail="Match not found")
     return {"data": convert_numpy_types(details)}
 
+
 # --- Player Endpoints ---
+
 
 @app.get("/players")
 def get_players():
@@ -124,11 +159,13 @@ def get_players():
     players = player_service.get_players()
     return {"data": convert_numpy_types(players)}
 
+
 @app.get("/player/compare")
 def compare_players(p1: int, p2: int):
     """Return side-by-side comparison of two players."""
     comparison = player_service.compare_players(p1, p2)
     return {"data": convert_numpy_types(comparison)}
+
 
 @app.get("/player/{player_id}")
 def get_player_details(player_id: int):
@@ -138,11 +175,14 @@ def get_player_details(player_id: int):
         raise HTTPException(status_code=404, detail="Player not found")
     return {"data": convert_numpy_types(details)}
 
+
 # --- Prediction Endpoints ---
+
 
 class PredictionRequest(BaseModel):
     home_team: str
     away_team: str
+
 
 @app.post("/predict")
 def predict(request: PredictionRequest):
@@ -153,5 +193,7 @@ def predict(request: PredictionRequest):
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
-        traceback.print_exc()
-        raise HTTPException(status_code=500, detail="An error occurred during prediction.")
+        logger.error("Exception occurred", exc_info=True)
+        raise HTTPException(
+            status_code=500, detail="An error occurred during prediction."
+        )
