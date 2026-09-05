@@ -10,6 +10,7 @@ import MatchDetailsPage from './pages/MatchDetailsPage';
 import PlayersPage from './pages/PlayersPage';
 import PlayerDetailsPage from './pages/PlayerDetailsPage';
 import PlayerComparePage from './pages/PlayerComparePage';
+import AIAssistantPage from './pages/AIAssistantPage';
 import AboutPage from './pages/AboutPage';
 
 function App() {
@@ -19,7 +20,9 @@ function App() {
         <Route path="/" element={<MainLayout />}>
           <Route index element={<LandingPage />} />
           <Route path="predict" element={<PredictionPage />} />
+          <Route path="ai-analyst" element={<AIAssistantPage />} />
           <Route path="league" element={<LeaguePage />} />
+
           <Route path="matches" element={<MatchesPage />} />
           <Route path="match/:id" element={<MatchDetailsPage />} />
           <Route path="players" element={<PlayersPage />} />

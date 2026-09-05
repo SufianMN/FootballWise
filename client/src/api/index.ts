@@ -21,4 +21,7 @@ export const getPlayers = () => api.get('/players');
 export const getPlayerDetails = (id: number) => api.get(`/player/${id}`);
 export const comparePlayers = (p1: number, p2: number) => api.get(`/player/compare?p1=${p1}&p2=${p2}`);
 
+export const sendChatMessage = (message: string) => api.post('/api/ai/chat', { message });
+
 export default api;
+

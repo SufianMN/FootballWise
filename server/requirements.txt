@@ -12,3 +12,8 @@ statsbombpy
 matplotlib
 seaborn
 scipy
+langchain-core>=0.3.0
+langgraph>=0.2.0
+langchain-openai>=0.2.0
+langchain-community>=0.3.0
+chromadb>=0.4.0

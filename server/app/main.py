@@ -33,6 +33,9 @@ app.add_middleware(
 )
 
 from .services.feature_builder_service import feature_builder_service
+from app.api.ai_routes import router as ai_router
+
+app.include_router(ai_router)
 
 
 @app.on_event("startup")
@@ -61,9 +64,9 @@ def health_check():
         "status": "healthy",
         "model_loaded": prediction_service.model is not None,
         "dataset_loaded": feature_builder_service.dataset_df is not None,
-        "teams_loaded": len(team_service.teams_df) > 0,
+        "teams_loaded": (len(team_service.teams_df) > 0) if team_service.teams_df is not None else (len(team_service.team_names) > 0),
         "players_loaded": not player_service.players_df.empty,
-        "league_loaded": not league_service.df_league.empty,
+        "league_loaded": (getattr(league_service, 'df_logs', None) is not None),
         "uptime_seconds": int(uptime),
     }
 
