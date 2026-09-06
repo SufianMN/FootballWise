@@ -92,11 +92,27 @@ def build_football_graph(timing_records: List[Dict[str, Any]]):
     return builder.compile()
 
 
+from .relevance_gate import is_football_query
+
+
 def run_football_agent(user_message: str) -> Dict[str, Any]:
     """
     Execute the FootballWise LangGraph agent workflow for a given user prompt.
     Returns structured response containing final_response, tool_calls, and timing logs.
+    Includes a zero-token local relevance gate that rejects non-football queries immediately.
     """
+    # 0. Local Domain Gate Check (0 Groq/LLM/RAG/tool calls on rejection)
+    if not is_football_query(user_message):
+        logger.info(f"Relevance Gate: Query '{user_message[:40]}' rejected as non-football (0 tokens used).")
+        return {
+            "response": "⚽ Please ask something related to football.",
+            "tool_calls": [],
+            "unconfigured": False,
+            "rejected": True,
+            "timing": [],
+            "total_ms": 0,
+        }
+
     if not is_llm_configured():
         return {
             "response": (
