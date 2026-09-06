@@ -11,12 +11,13 @@ from app.core.logger import get_logger
 
 logger = get_logger(__name__)
 
-# Free-tier token budget constants (Target: < 5500 input tokens to stay comfortably below 8000 TPM)
-MAX_INPUT_TOKENS = int(os.environ.get("MAX_INPUT_TOKENS", 5500))
-MAX_RAG_TOKENS = int(os.environ.get("MAX_RAG_TOKENS", 2000))
-MAX_TOOL_OUTPUT_TOKENS = int(os.environ.get("MAX_TOOL_OUTPUT_TOKENS", 1500))
-MAX_HISTORY_TOKENS = int(os.environ.get("MAX_HISTORY_TOKENS", 1000))
-MAX_SYSTEM_TOKENS = int(os.environ.get("MAX_SYSTEM_TOKENS", 600))
+# Free-tier token budget constants (Target: < 3500 input tokens to stay comfortably below 8000 TPM limit)
+MAX_INPUT_TOKENS = int(os.environ.get("MAX_INPUT_TOKENS", 3500))
+MAX_RAG_TOKENS = int(os.environ.get("MAX_RAG_TOKENS", 1000))
+MAX_TOOL_OUTPUT_TOKENS = int(os.environ.get("MAX_TOOL_OUTPUT_TOKENS", 800))
+MAX_HISTORY_TOKENS = int(os.environ.get("MAX_HISTORY_TOKENS", 600))
+MAX_SYSTEM_TOKENS = int(os.environ.get("MAX_SYSTEM_TOKENS", 500))
+
 
 
 def estimate_tokens(text: str) -> int:

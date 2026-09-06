@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User, Sparkles, Wrench, AlertCircle, RefreshCw } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { sendChatMessage } from '../api';
 
 interface Message {
@@ -151,18 +153,76 @@ const AIAssistantPage: React.FC = () => {
                   <AlertCircle size={16} className="shrink-0" />
                   <span>GROQ_API_KEY is not configured on the server. Set GROQ_API_KEY in server/.env to enable live LLM reasoning.</span>
                 </div>
-
               )}
 
               {/* Message Content Bubble */}
               <div
-                className={`p-4 rounded-xl text-sm leading-relaxed whitespace-pre-wrap ${
+                className={`p-4 rounded-xl text-sm leading-relaxed ${
                   msg.sender === 'user'
-                    ? 'bg-primary text-white rounded-tr-none'
+                    ? 'bg-primary text-white rounded-tr-none whitespace-pre-wrap'
                     : 'bg-slate-800/90 border border-slate-700/60 text-slate-200 rounded-tl-none shadow-sm'
                 }`}
               >
-                {msg.text}
+                {msg.sender === 'assistant' ? (
+                  <div className="text-sm text-slate-200 leading-relaxed">
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        table: ({ ...props }) => (
+                          <div className="overflow-x-auto my-3 border border-slate-700/80 rounded-lg shadow-sm bg-slate-900/60">
+                            <table className="w-full text-left text-xs border-collapse" {...props} />
+                          </div>
+                        ),
+                        thead: ({ ...props }) => (
+                          <thead className="bg-slate-800/90 text-slate-200 font-semibold border-b border-slate-700" {...props} />
+                        ),
+                        tbody: ({ ...props }) => (
+                          <tbody className="divide-y divide-slate-800 text-slate-300" {...props} />
+                        ),
+                        tr: ({ ...props }) => (
+                          <tr className="hover:bg-slate-800/40 transition-colors" {...props} />
+                        ),
+                        th: ({ ...props }) => (
+                          <th className="px-3.5 py-2.5 font-semibold text-slate-200 border-b border-slate-700" {...props} />
+                        ),
+                        td: ({ ...props }) => (
+                          <td className="px-3.5 py-2 text-slate-300" {...props} />
+                        ),
+                        h2: ({ ...props }) => (
+                          <h2 className="text-base font-bold text-white mt-4 mb-2 border-b border-slate-700/60 pb-1 flex items-center gap-1.5" {...props} />
+                        ),
+                        h3: ({ ...props }) => (
+                          <h3 className="text-sm font-semibold text-slate-200 mt-3 mb-1" {...props} />
+                        ),
+                        ul: ({ ...props }) => (
+                          <ul className="list-disc list-inside space-y-1.5 my-2 text-slate-300 pl-1" {...props} />
+                        ),
+                        ol: ({ ...props }) => (
+                          <ol className="list-decimal list-inside space-y-1.5 my-2 text-slate-300 pl-1" {...props} />
+                        ),
+                        li: ({ ...props }) => (
+                          <li className="my-0.5 text-slate-300 leading-relaxed" {...props} />
+                        ),
+                        p: ({ ...props }) => (
+                          <p className="my-2 text-slate-200 leading-relaxed" {...props} />
+                        ),
+                        strong: ({ ...props }) => (
+                          <strong className="font-semibold text-white" {...props} />
+                        ),
+                        code: ({ ...props }) => (
+                          <code className="bg-slate-900 border border-slate-700/80 px-1.5 py-0.5 rounded text-xs font-mono text-primary" {...props} />
+                        ),
+                        blockquote: ({ ...props }) => (
+                          <blockquote className="border-l-2 border-primary/60 pl-3 my-2 text-slate-400 italic text-xs" {...props} />
+                        ),
+                      }}
+                    >
+                      {msg.text}
+                    </ReactMarkdown>
+                  </div>
+                ) : (
+                  msg.text
+                )}
               </div>
 
               <span className="text-[10px] text-slate-500 mt-1 px-1">{msg.timestamp}</span>

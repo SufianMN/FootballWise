@@ -76,7 +76,7 @@ def get_llm(model_name: Optional[str] = None, temperature: float = 0.2):
         api_key = get_sanitized_groq_key()
         base_url = os.environ.get("GROQ_BASE_URL", "https://api.groq.com/openai/v1")
 
-        max_output_tokens = int(os.environ.get("MAX_OUTPUT_TOKENS", 800))
+        max_output_tokens = int(os.environ.get("MAX_OUTPUT_TOKENS", 500))
         try:
             from langchain_openai import ChatOpenAI
 
