@@ -53,7 +53,7 @@ const MatchesPage: React.FC = () => {
       </div>
 
       {/* FILTERS */}
-      <div className="bg-slate-900/90 backdrop-blur-md p-6 rounded-2xl border border-slate-700/80 shadow-2xl shadow-slate-950/40 flex flex-col md:flex-row gap-4 mb-8">
+      <div className="bg-slate-900/90 backdrop-blur-md p-6 rounded-2xl border border-slate-700/80 shadow-2xl shadow-slate-950/40 flex flex-col md:flex-row gap-4 mb-8 relative z-30">
         <div className="flex-1 relative">
           <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
             <Search size={18} className="text-slate-400" />

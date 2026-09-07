@@ -101,7 +101,7 @@ const LeaguePage: React.FC = () => {
   return (
     <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 animate-fade-in">
       {/* HEADER & SELECTOR */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 relative z-30">
         <div className="flex items-center gap-3">
           <div className="bg-gradient-to-tr from-blue-600 to-indigo-500 text-white p-3 rounded-xl shadow-lg shadow-blue-500/25 border border-blue-400/20">
             <Trophy size={28} />
@@ -119,7 +119,7 @@ const LeaguePage: React.FC = () => {
           value={selectedComp}
           onChange={(val) => setSelectedComp(val)}
           placeholder="Select Competition..."
-          searchable={true}
+          searchable={false}
           className="w-full md:w-[320px]"
         />
       </div>
