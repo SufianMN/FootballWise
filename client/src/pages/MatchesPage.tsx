@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { searchMatches } from '../api';
+import CustomSelect from '../components/CustomSelect/CustomSelect';
 import { Search, ChevronLeft, ChevronRight, List } from 'lucide-react';
 
 const MatchesPage: React.FC = () => {
@@ -77,14 +78,15 @@ const MatchesPage: React.FC = () => {
             className="w-full bg-slate-950/80 border border-slate-700/80 rounded-xl pl-10 p-3.5 text-white outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 transition-all font-medium"
           />
         </div>
-        <select 
-          value={sort} 
-          onChange={(e) => { setSort(e.target.value); setPage(1); }}
-          className="bg-slate-950/80 border border-slate-700/80 rounded-xl p-3.5 text-white outline-none focus:border-blue-500 min-w-[160px] font-medium cursor-pointer"
-        >
-          <option value="desc" className="bg-slate-900 text-white">Newest First</option>
-          <option value="asc" className="bg-slate-900 text-white">Oldest First</option>
-        </select>
+        <CustomSelect 
+          options={[
+            { value: 'desc', label: 'Newest First' },
+            { value: 'asc', label: 'Oldest First' }
+          ]}
+          value={sort}
+          onChange={(val) => { setSort(val); setPage(1); }}
+          className="min-w-[170px]"
+        />
       </div>
 
       {/* MATCHES TABLE */}

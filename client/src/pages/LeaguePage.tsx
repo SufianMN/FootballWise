@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getCompetitions, getLeagueAnalytics } from '../api';
+import CustomSelect from '../components/CustomSelect/CustomSelect';
 import { Trophy } from 'lucide-react';
 import { 
   ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -113,15 +114,14 @@ const LeaguePage: React.FC = () => {
           </div>
         </div>
 
-        <select 
+        <CustomSelect 
+          options={competitions.map(comp => ({ value: comp.id, label: comp.name }))}
           value={selectedComp}
-          onChange={(e) => setSelectedComp(e.target.value)}
-          className="bg-slate-950/80 border border-slate-700/80 rounded-xl p-3.5 text-white min-w-[300px] outline-none focus:border-blue-500 shadow-xl font-medium cursor-pointer"
-        >
-          {competitions.map(comp => (
-            <option key={comp.id} value={comp.id} className="bg-slate-900 text-white">{comp.name}</option>
-          ))}
-        </select>
+          onChange={(val) => setSelectedComp(val)}
+          placeholder="Select Competition..."
+          searchable={true}
+          className="w-full md:w-[320px]"
+        />
       </div>
 
       {/* LEADERS CARDS */}
