@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getCompetitions, getLeagueAnalytics } from '../api';
+import { Trophy } from 'lucide-react';
 import { 
   ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   BarChart, Bar, Cell
@@ -46,13 +47,13 @@ const LeaguePage: React.FC = () => {
 
   if (loading || !leagueData) {
     return (
-      <div className="max-w-7xl mx-auto py-8 px-4">
+      <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6">
         <div className="flex justify-between items-center mb-8">
-          <h2 className="text-3xl font-bold text-white">League Intelligence</h2>
-          <div className="w-64 h-12 bg-surface rounded-lg animate-pulse"></div>
+          <div className="h-10 w-64 bg-slate-900/80 rounded-xl animate-pulse"></div>
+          <div className="w-64 h-12 bg-slate-900/80 rounded-xl animate-pulse"></div>
         </div>
-        <div className="h-96 bg-surface rounded-xl animate-pulse mb-8"></div>
-        <div className="h-64 bg-surface rounded-xl animate-pulse"></div>
+        <div className="h-96 bg-slate-900/80 rounded-2xl animate-pulse mb-8"></div>
+        <div className="h-64 bg-slate-900/80 rounded-2xl animate-pulse"></div>
       </div>
     );
   }
@@ -86,7 +87,7 @@ const LeaguePage: React.FC = () => {
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-surface border border-slate-600 p-3 rounded shadow-lg text-white">
+        <div className="bg-slate-900 border border-slate-700 p-3 rounded-xl shadow-xl text-white">
           <p className="font-bold">{payload[0].payload.name}</p>
           <p className="text-emerald-400">Avg xG: {payload[0].payload.x}</p>
           <p className="text-red-400">Avg xGA: {payload[0].payload.y}</p>
@@ -97,88 +98,96 @@ const LeaguePage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto py-8 px-4 animate-fade-in">
+    <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 animate-fade-in">
       {/* HEADER & SELECTOR */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-        <div>
-          <h2 className="text-3xl font-bold text-white">League Intelligence</h2>
-          <p className="text-textSecondary">{competition} &bull; {season}</p>
+        <div className="flex items-center gap-3">
+          <div className="bg-gradient-to-tr from-blue-600 to-indigo-500 text-white p-3 rounded-xl shadow-lg shadow-blue-500/25 border border-blue-400/20">
+            <Trophy size={28} />
+          </div>
+          <div>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-200 to-white">
+              League Intelligence
+            </h2>
+            <p className="text-xs text-blue-400 font-semibold uppercase tracking-wider mt-1">{competition} &bull; {season}</p>
+          </div>
         </div>
+
         <select 
           value={selectedComp}
           onChange={(e) => setSelectedComp(e.target.value)}
-          className="bg-surface border border-slate-600 rounded-lg p-3 text-white min-w-[300px] outline-none focus:border-primary shadow-lg"
+          className="bg-slate-950/80 border border-slate-700/80 rounded-xl p-3.5 text-white min-w-[300px] outline-none focus:border-blue-500 shadow-xl font-medium cursor-pointer"
         >
           {competitions.map(comp => (
-            <option key={comp.id} value={comp.id}>{comp.name}</option>
+            <option key={comp.id} value={comp.id} className="bg-slate-900 text-white">{comp.name}</option>
           ))}
         </select>
       </div>
 
       {/* LEADERS CARDS */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-        <div className="bg-surface p-4 rounded-xl border border-emerald-900/50 shadow-md">
-          <div className="text-emerald-400 text-sm mb-1 uppercase tracking-wider font-bold">🏆 Best Attack</div>
-          <div className="text-xl font-bold text-white truncate">{leaders.best_attack_team}</div>
-          <div className="text-sm text-textSecondary">{leaders.best_attack_val} Goals</div>
+        <div className="bg-slate-900/90 backdrop-blur-md p-5 rounded-2xl border border-emerald-500/30 shadow-xl shadow-slate-950/40">
+          <div className="text-emerald-400 text-xs mb-1 uppercase tracking-wider font-bold">🏆 Best Attack</div>
+          <div className="text-lg font-black text-white truncate">{leaders.best_attack_team}</div>
+          <div className="text-xs text-slate-400 mt-1 font-medium">{leaders.best_attack_val} Goals</div>
         </div>
-        <div className="bg-surface p-4 rounded-xl border border-red-900/50 shadow-md">
-          <div className="text-red-400 text-sm mb-1 uppercase tracking-wider font-bold">🛡 Best Defense</div>
-          <div className="text-xl font-bold text-white truncate">{leaders.best_defense_team}</div>
-          <div className="text-sm text-textSecondary">{leaders.best_defense_val} Conceded</div>
+        <div className="bg-slate-900/90 backdrop-blur-md p-5 rounded-2xl border border-red-500/30 shadow-xl shadow-slate-950/40">
+          <div className="text-red-400 text-xs mb-1 uppercase tracking-wider font-bold">🛡 Best Defense</div>
+          <div className="text-lg font-black text-white truncate">{leaders.best_defense_team}</div>
+          <div className="text-xs text-slate-400 mt-1 font-medium">{leaders.best_defense_val} Conceded</div>
         </div>
-        <div className="bg-surface p-4 rounded-xl border border-blue-900/50 shadow-md">
-          <div className="text-blue-400 text-sm mb-1 uppercase tracking-wider font-bold">⚽ Highest xG</div>
-          <div className="text-xl font-bold text-white truncate">{leaders.highest_xg_team}</div>
-          <div className="text-sm text-textSecondary">{leaders.highest_xg_val} per game</div>
+        <div className="bg-slate-900/90 backdrop-blur-md p-5 rounded-2xl border border-blue-500/30 shadow-xl shadow-slate-950/40">
+          <div className="text-blue-400 text-xs mb-1 uppercase tracking-wider font-bold">⚽ Highest xG</div>
+          <div className="text-lg font-black text-white truncate">{leaders.highest_xg_team}</div>
+          <div className="text-xs text-slate-400 mt-1 font-medium">{leaders.highest_xg_val} per game</div>
         </div>
-        <div className="bg-surface p-4 rounded-xl border border-purple-900/50 shadow-md">
-          <div className="text-purple-400 text-sm mb-1 uppercase tracking-wider font-bold">🔥 Best Form</div>
-          <div className="text-xl font-bold text-white truncate">{leaders.best_form_team}</div>
-          <div className="text-sm text-textSecondary">{leaders.best_form_val}% Win Rate</div>
+        <div className="bg-slate-900/90 backdrop-blur-md p-5 rounded-2xl border border-purple-500/30 shadow-xl shadow-slate-950/40">
+          <div className="text-purple-400 text-xs mb-1 uppercase tracking-wider font-bold">🔥 Best Form</div>
+          <div className="text-lg font-black text-white truncate">{leaders.best_form_team}</div>
+          <div className="text-xs text-slate-400 mt-1 font-medium">{leaders.best_form_val}% Win Rate</div>
         </div>
-        <div className="bg-surface p-4 rounded-xl border border-yellow-900/50 shadow-md">
-          <div className="text-yellow-400 text-sm mb-1 uppercase tracking-wider font-bold">🎯 Best Passing</div>
-          <div className="text-xl font-bold text-white truncate">{leaders.best_pass_team}</div>
-          <div className="text-sm text-textSecondary">{leaders.best_pass_val}% Accuracy</div>
+        <div className="bg-slate-900/90 backdrop-blur-md p-5 rounded-2xl border border-yellow-500/30 shadow-xl shadow-slate-950/40">
+          <div className="text-yellow-400 text-xs mb-1 uppercase tracking-wider font-bold">🎯 Best Passing</div>
+          <div className="text-lg font-black text-white truncate">{leaders.best_pass_team}</div>
+          <div className="text-xs text-slate-400 mt-1 font-medium">{leaders.best_pass_val}% Accuracy</div>
         </div>
       </div>
 
       {/* STANDINGS TABLE */}
-      <div className="bg-surface rounded-xl border border-slate-700 shadow-lg overflow-hidden mb-12">
-        <div className="px-6 py-4 border-b border-slate-700 bg-slate-800/50 flex justify-between items-center">
-          <h3 className="text-lg font-bold text-white">League Standings</h3>
-          <span className="text-xs text-textSecondary">Click columns to sort</span>
+      <div className="bg-slate-900/90 backdrop-blur-md rounded-2xl border border-slate-700/80 shadow-2xl shadow-slate-950/40 overflow-hidden mb-12">
+        <div className="px-6 py-4 border-b border-slate-700/80 bg-slate-800/80 flex justify-between items-center">
+          <h3 className="text-lg font-bold text-slate-100">League Standings</h3>
+          <span className="text-xs text-slate-400">Click headers to sort</span>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-900/50 text-textSecondary text-xs uppercase tracking-wider">
-                <th className="px-6 py-3 cursor-pointer hover:text-white" onClick={() => handleSort('position')}>Pos</th>
-                <th className="px-6 py-3 cursor-pointer hover:text-white" onClick={() => handleSort('team_name')}>Club</th>
-                <th className="px-4 py-3 cursor-pointer hover:text-white" onClick={() => handleSort('matches')}>MP</th>
-                <th className="px-4 py-3 cursor-pointer hover:text-white" onClick={() => handleSort('wins')}>W</th>
-                <th className="px-4 py-3 cursor-pointer hover:text-white" onClick={() => handleSort('draws')}>D</th>
-                <th className="px-4 py-3 cursor-pointer hover:text-white" onClick={() => handleSort('losses')}>L</th>
-                <th className="px-4 py-3 cursor-pointer hover:text-white" onClick={() => handleSort('goals_for')}>GF</th>
-                <th className="px-4 py-3 cursor-pointer hover:text-white" onClick={() => handleSort('goals_against')}>GA</th>
-                <th className="px-4 py-3 cursor-pointer hover:text-white" onClick={() => handleSort('goal_difference')}>GD</th>
-                <th className="px-6 py-3 font-bold cursor-pointer hover:text-white text-primary" onClick={() => handleSort('points')}>Pts</th>
+              <tr className="bg-slate-950/80 text-slate-400 text-xs uppercase tracking-wider">
+                <th className="px-6 py-3.5 cursor-pointer hover:text-white" onClick={() => handleSort('position')}>Pos</th>
+                <th className="px-6 py-3.5 cursor-pointer hover:text-white" onClick={() => handleSort('team_name')}>Club</th>
+                <th className="px-4 py-3.5 cursor-pointer hover:text-white" onClick={() => handleSort('matches')}>MP</th>
+                <th className="px-4 py-3.5 cursor-pointer hover:text-white" onClick={() => handleSort('wins')}>W</th>
+                <th className="px-4 py-3.5 cursor-pointer hover:text-white" onClick={() => handleSort('draws')}>D</th>
+                <th className="px-4 py-3.5 cursor-pointer hover:text-white" onClick={() => handleSort('losses')}>L</th>
+                <th className="px-4 py-3.5 cursor-pointer hover:text-white" onClick={() => handleSort('goals_for')}>GF</th>
+                <th className="px-4 py-3.5 cursor-pointer hover:text-white" onClick={() => handleSort('goals_against')}>GA</th>
+                <th className="px-4 py-3.5 cursor-pointer hover:text-white" onClick={() => handleSort('goal_difference')}>GD</th>
+                <th className="px-6 py-3.5 font-bold cursor-pointer hover:text-white text-blue-400" onClick={() => handleSort('points')}>Pts</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-700/50">
+            <tbody className="divide-y divide-slate-800/60">
               {sortedTable.map((row) => (
-                <tr key={row.team_id} className="hover:bg-slate-800/30 transition-colors">
-                  <td className="px-6 py-3 text-white font-medium">{row.position}</td>
-                  <td className="px-6 py-3 text-white font-bold">{row.team_name}</td>
-                  <td className="px-4 py-3 text-slate-300">{row.matches}</td>
-                  <td className="px-4 py-3 text-slate-300">{row.wins}</td>
-                  <td className="px-4 py-3 text-slate-300">{row.draws}</td>
-                  <td className="px-4 py-3 text-slate-300">{row.losses}</td>
-                  <td className="px-4 py-3 text-slate-300">{row.goals_for}</td>
-                  <td className="px-4 py-3 text-slate-300">{row.goals_against}</td>
-                  <td className="px-4 py-3 text-slate-300">{row.goal_difference > 0 ? `+${row.goal_difference}` : row.goal_difference}</td>
-                  <td className="px-6 py-3 text-white font-bold">{row.points}</td>
+                <tr key={row.team_id} className="hover:bg-slate-800/50 transition-colors">
+                  <td className="px-6 py-3.5 text-slate-200 font-medium">{row.position}</td>
+                  <td className="px-6 py-3.5 text-white font-bold">{row.team_name}</td>
+                  <td className="px-4 py-3.5 text-slate-300">{row.matches}</td>
+                  <td className="px-4 py-3.5 text-slate-300">{row.wins}</td>
+                  <td className="px-4 py-3.5 text-slate-300">{row.draws}</td>
+                  <td className="px-4 py-3.5 text-slate-300">{row.losses}</td>
+                  <td className="px-4 py-3.5 text-slate-300">{row.goals_for}</td>
+                  <td className="px-4 py-3.5 text-slate-300">{row.goals_against}</td>
+                  <td className="px-4 py-3.5 text-slate-300">{row.goal_difference > 0 ? `+${row.goal_difference}` : row.goal_difference}</td>
+                  <td className="px-6 py-3.5 text-white font-black text-base">{row.points}</td>
                 </tr>
               ))}
             </tbody>
@@ -188,9 +197,9 @@ const LeaguePage: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
         {/* ATTACK VS DEFENSE SCATTER */}
-        <div className="bg-surface p-6 rounded-xl border border-slate-700 shadow-lg h-[450px]">
-          <h3 className="text-lg font-bold text-white mb-2">Playstyle: Attack vs Defense</h3>
-          <p className="text-sm text-textSecondary mb-6">Average xG vs Average xGA per match</p>
+        <div className="bg-slate-900/90 backdrop-blur-md p-6 rounded-2xl border border-slate-700/80 shadow-2xl shadow-slate-950/40 h-[450px]">
+          <h3 className="text-lg font-bold text-slate-100 mb-1">Playstyle: Attack vs Defense</h3>
+          <p className="text-xs text-slate-400 mb-6">Average xG vs Average xGA per match</p>
           <ResponsiveContainer width="100%" height="80%">
             <ScatterChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
@@ -209,14 +218,14 @@ const LeaguePage: React.FC = () => {
         </div>
 
         {/* ADVANCED STATS TABLE */}
-        <div className="bg-surface rounded-xl border border-slate-700 shadow-lg overflow-hidden h-[450px] flex flex-col">
-          <div className="px-6 py-4 border-b border-slate-700 bg-slate-800/50">
-            <h3 className="text-lg font-bold text-white">Advanced Team Metrics</h3>
+        <div className="bg-slate-900/90 backdrop-blur-md rounded-2xl border border-slate-700/80 shadow-2xl shadow-slate-950/40 overflow-hidden h-[450px] flex flex-col">
+          <div className="px-6 py-4 border-b border-slate-700/80 bg-slate-800/80">
+            <h3 className="text-lg font-bold text-slate-100">Advanced Team Metrics</h3>
           </div>
           <div className="overflow-y-auto flex-1 p-0">
             <table className="w-full text-left border-collapse">
-              <thead className="sticky top-0 bg-slate-900 shadow">
-                <tr className="text-textSecondary text-xs uppercase tracking-wider">
+              <thead className="sticky top-0 bg-slate-950 shadow">
+                <tr className="text-slate-400 text-xs uppercase tracking-wider">
                   <th className="px-4 py-3 cursor-pointer hover:text-white" onClick={() => handleSort('team_name')}>Club</th>
                   <th className="px-4 py-3 cursor-pointer hover:text-white" onClick={() => handleSort('avg_possession')}>Poss %</th>
                   <th className="px-4 py-3 cursor-pointer hover:text-white" onClick={() => handleSort('avg_pass_accuracy')}>Pass Acc</th>
@@ -224,9 +233,9 @@ const LeaguePage: React.FC = () => {
                   <th className="px-4 py-3 cursor-pointer hover:text-white" onClick={() => handleSort('clean_sheet_pct')}>CS %</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-700/50">
+              <tbody className="divide-y divide-slate-800/60">
                 {sortedTable.map((row) => (
-                  <tr key={`adv-${row.team_id}`} className="hover:bg-slate-800/30">
+                  <tr key={`adv-${row.team_id}`} className="hover:bg-slate-800/50">
                     <td className="px-4 py-3 text-white font-medium truncate max-w-[120px]">{row.team_name}</td>
                     <td className="px-4 py-3 text-slate-300">{row.avg_possession}%</td>
                     <td className="px-4 py-3 text-slate-300">{row.avg_pass_accuracy}%</td>
@@ -241,41 +250,41 @@ const LeaguePage: React.FC = () => {
       </div>
       
       {/* RANKINGS BAR CHARTS */}
-      <h3 className="text-2xl font-bold text-white mb-6">Top 5 Rankings</h3>
+      <h3 className="text-2xl font-bold text-slate-100 mb-6">Top 5 Rankings</h3>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         
-        <div className="bg-surface p-6 rounded-xl border border-slate-700 shadow-lg h-72">
+        <div className="bg-slate-900/90 backdrop-blur-md p-6 rounded-2xl border border-slate-700/80 shadow-2xl shadow-slate-950/40 h-72">
           <h4 className="text-md font-bold text-emerald-400 mb-4">Highest xG</h4>
           <ResponsiveContainer width="100%" height="80%">
             <BarChart data={rankings.top_xg} layout="vertical" margin={{ top: 0, right: 20, left: 20, bottom: 0 }}>
               <XAxis type="number" hide />
               <YAxis dataKey="team_name" type="category" stroke="#94a3b8" width={100} tick={{fontSize: 12}} />
-              <Tooltip cursor={{fill: '#334155', opacity: 0.4}} contentStyle={{ backgroundColor: '#1e293b', borderColor: '#334155', color: '#fff' }} />
-              <Bar dataKey="avg_xg" fill="#10b981" radius={[0, 4, 4, 0]} barSize={20} />
+              <Tooltip cursor={{fill: '#334155', opacity: 0.4}} contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', color: '#fff', borderRadius: '0.75rem' }} />
+              <Bar dataKey="avg_xg" fill="#10b981" radius={[0, 6, 6, 0]} barSize={20} />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
-        <div className="bg-surface p-6 rounded-xl border border-slate-700 shadow-lg h-72">
+        <div className="bg-slate-900/90 backdrop-blur-md p-6 rounded-2xl border border-slate-700/80 shadow-2xl shadow-slate-950/40 h-72">
           <h4 className="text-md font-bold text-blue-400 mb-4">Highest Possession %</h4>
           <ResponsiveContainer width="100%" height="80%">
             <BarChart data={rankings.top_possession} layout="vertical" margin={{ top: 0, right: 20, left: 20, bottom: 0 }}>
               <XAxis type="number" hide />
               <YAxis dataKey="team_name" type="category" stroke="#94a3b8" width={100} tick={{fontSize: 12}} />
-              <Tooltip cursor={{fill: '#334155', opacity: 0.4}} contentStyle={{ backgroundColor: '#1e293b', borderColor: '#334155', color: '#fff' }} />
-              <Bar dataKey="avg_possession" fill="#3b82f6" radius={[0, 4, 4, 0]} barSize={20} />
+              <Tooltip cursor={{fill: '#334155', opacity: 0.4}} contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', color: '#fff', borderRadius: '0.75rem' }} />
+              <Bar dataKey="avg_possession" fill="#3b82f6" radius={[0, 6, 6, 0]} barSize={20} />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
-        <div className="bg-surface p-6 rounded-xl border border-slate-700 shadow-lg h-72">
+        <div className="bg-slate-900/90 backdrop-blur-md p-6 rounded-2xl border border-slate-700/80 shadow-2xl shadow-slate-950/40 h-72">
           <h4 className="text-md font-bold text-purple-400 mb-4">Pass Accuracy %</h4>
           <ResponsiveContainer width="100%" height="80%">
             <BarChart data={rankings.top_pass_accuracy} layout="vertical" margin={{ top: 0, right: 20, left: 20, bottom: 0 }}>
               <XAxis type="number" hide />
               <YAxis dataKey="team_name" type="category" stroke="#94a3b8" width={100} tick={{fontSize: 12}} />
-              <Tooltip cursor={{fill: '#334155', opacity: 0.4}} contentStyle={{ backgroundColor: '#1e293b', borderColor: '#334155', color: '#fff' }} />
-              <Bar dataKey="avg_pass_accuracy" fill="#a855f7" radius={[0, 4, 4, 0]} barSize={20} />
+              <Tooltip cursor={{fill: '#334155', opacity: 0.4}} contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', color: '#fff', borderRadius: '0.75rem' }} />
+              <Bar dataKey="avg_pass_accuracy" fill="#a855f7" radius={[0, 6, 6, 0]} barSize={20} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -287,3 +296,4 @@ const LeaguePage: React.FC = () => {
 };
 
 export default LeaguePage;
+

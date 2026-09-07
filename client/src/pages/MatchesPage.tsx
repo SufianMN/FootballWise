@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { searchMatches } from '../api';
-import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, List } from 'lucide-react';
 
 const MatchesPage: React.FC = () => {
   const navigate = useNavigate();
@@ -29,7 +29,6 @@ const MatchesPage: React.FC = () => {
   };
 
   useEffect(() => {
-    // Debounce typing
     const timer = setTimeout(() => {
       fetchMatches();
     }, 500);
@@ -39,16 +38,23 @@ const MatchesPage: React.FC = () => {
   const totalPages = Math.ceil(total / 20);
 
   return (
-    <div className="max-w-7xl mx-auto py-8 px-4 animate-fade-in">
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold text-white mb-2">Historical Match Explorer</h2>
-        <p className="text-textSecondary">Browse {total > 0 ? total : ''} historical football matches from the StatsBomb dataset.</p>
+    <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 animate-fade-in">
+      <div className="flex items-center gap-3 mb-8">
+        <div className="bg-gradient-to-tr from-blue-600 to-indigo-500 text-white p-3 rounded-xl shadow-lg shadow-blue-500/25 border border-blue-400/20">
+          <List size={28} />
+        </div>
+        <div>
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-200 to-white">
+            Historical Match Explorer
+          </h2>
+          <p className="text-xs text-blue-400 font-semibold uppercase tracking-wider mt-1">Browse {total > 0 ? total : ''} StatsBomb Matches</p>
+        </div>
       </div>
 
       {/* FILTERS */}
-      <div className="bg-surface p-6 rounded-xl border border-slate-700 shadow-lg flex flex-col md:flex-row gap-4 mb-8">
+      <div className="bg-slate-900/90 backdrop-blur-md p-6 rounded-2xl border border-slate-700/80 shadow-2xl shadow-slate-950/40 flex flex-col md:flex-row gap-4 mb-8">
         <div className="flex-1 relative">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
             <Search size={18} className="text-slate-400" />
           </div>
           <input 
@@ -56,11 +62,11 @@ const MatchesPage: React.FC = () => {
             placeholder="Search by team (e.g. Arsenal)" 
             value={team}
             onChange={(e) => { setTeam(e.target.value); setPage(1); }}
-            className="w-full bg-slate-800 border border-slate-600 rounded-lg pl-10 p-3 text-white outline-none focus:border-primary transition-colors"
+            className="w-full bg-slate-950/80 border border-slate-700/80 rounded-xl pl-10 p-3.5 text-white outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 transition-all font-medium"
           />
         </div>
         <div className="flex-1 relative">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
             <Search size={18} className="text-slate-400" />
           </div>
           <input 
@@ -68,25 +74,25 @@ const MatchesPage: React.FC = () => {
             placeholder="Search by competition (e.g. La Liga)" 
             value={competition}
             onChange={(e) => { setCompetition(e.target.value); setPage(1); }}
-            className="w-full bg-slate-800 border border-slate-600 rounded-lg pl-10 p-3 text-white outline-none focus:border-primary transition-colors"
+            className="w-full bg-slate-950/80 border border-slate-700/80 rounded-xl pl-10 p-3.5 text-white outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 transition-all font-medium"
           />
         </div>
         <select 
           value={sort} 
           onChange={(e) => { setSort(e.target.value); setPage(1); }}
-          className="bg-slate-800 border border-slate-600 rounded-lg p-3 text-white outline-none focus:border-primary min-w-[150px]"
+          className="bg-slate-950/80 border border-slate-700/80 rounded-xl p-3.5 text-white outline-none focus:border-blue-500 min-w-[160px] font-medium cursor-pointer"
         >
-          <option value="desc">Newest First</option>
-          <option value="asc">Oldest First</option>
+          <option value="desc" className="bg-slate-900 text-white">Newest First</option>
+          <option value="asc" className="bg-slate-900 text-white">Oldest First</option>
         </select>
       </div>
 
       {/* MATCHES TABLE */}
-      <div className="bg-surface rounded-xl border border-slate-700 shadow-lg overflow-hidden mb-6">
+      <div className="bg-slate-900/90 backdrop-blur-md rounded-2xl border border-slate-700/80 shadow-2xl shadow-slate-950/40 overflow-hidden mb-6">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-900/50 text-textSecondary text-xs uppercase tracking-wider">
+              <tr className="bg-slate-950/80 text-slate-400 text-xs uppercase tracking-wider">
                 <th className="px-6 py-4">Date</th>
                 <th className="px-6 py-4">Competition</th>
                 <th className="px-6 py-4 text-right">Home Team</th>
@@ -95,18 +101,18 @@ const MatchesPage: React.FC = () => {
                 <th className="px-6 py-4">Winner</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-700/50">
+            <tbody className="divide-y divide-slate-800/60">
               {loading ? (
                 Array.from({ length: 10 }).map((_, i) => (
                   <tr key={`skeleton-${i}`}>
                     <td colSpan={6} className="px-6 py-4">
-                      <div className="h-6 bg-slate-800 rounded animate-pulse"></div>
+                      <div className="h-6 bg-slate-800/80 rounded-lg animate-pulse"></div>
                     </td>
                   </tr>
                 ))
               ) : matches.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-8 text-center text-textSecondary">
+                  <td colSpan={6} className="px-6 py-8 text-center text-slate-400">
                     No matches found matching your filters.
                   </td>
                 </tr>
@@ -115,22 +121,22 @@ const MatchesPage: React.FC = () => {
                   <tr 
                     key={match.match_id} 
                     onClick={() => navigate(`/match/${match.match_id}`)}
-                    className="hover:bg-slate-800/30 transition-colors cursor-pointer group"
+                    className="hover:bg-slate-800/50 transition-colors cursor-pointer group"
                   >
                     <td className="px-6 py-4 text-slate-300 whitespace-nowrap">{match.date}</td>
                     <td className="px-6 py-4 text-slate-400 text-sm whitespace-nowrap">
-                      <div>{match.competition}</div>
-                      <div className="text-xs text-slate-500">{match.season}</div>
+                      <div className="font-semibold text-slate-200">{match.competition}</div>
+                      <div className="text-xs text-slate-400">{match.season}</div>
                     </td>
                     <td className="px-6 py-4 text-white font-bold text-right">{match.home_team}</td>
                     <td className="px-6 py-4">
-                      <div className="bg-slate-900 border border-slate-700 rounded-md px-3 py-1.5 text-center font-bold text-white group-hover:border-primary transition-colors">
+                      <div className="bg-slate-950 border border-slate-700/80 rounded-lg px-3 py-1.5 text-center font-black text-white group-hover:border-blue-500 transition-colors shadow-inner">
                         {match.score}
                       </div>
                     </td>
                     <td className="px-6 py-4 text-white font-bold">{match.away_team}</td>
-                    <td className="px-6 py-4 text-slate-300">
-                      {match.winner === 'Draw' ? <span className="text-slate-400">Draw</span> : <span className="text-emerald-400">{match.winner}</span>}
+                    <td className="px-6 py-4 text-slate-300 font-medium">
+                      {match.winner === 'Draw' ? <span className="text-slate-400">Draw</span> : <span className="text-emerald-400 font-semibold">{match.winner}</span>}
                     </td>
                   </tr>
                 ))
@@ -142,21 +148,21 @@ const MatchesPage: React.FC = () => {
 
       {/* PAGINATION */}
       {totalPages > 1 && (
-        <div className="flex justify-between items-center bg-surface border border-slate-700 rounded-xl p-4 shadow-lg">
+        <div className="flex justify-between items-center bg-slate-900/90 backdrop-blur-md border border-slate-700/80 rounded-2xl p-4 shadow-xl">
           <button 
             onClick={() => setPage(p => Math.max(1, p - 1))}
             disabled={page === 1 || loading}
-            className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-white font-medium transition-colors"
+            className="flex items-center gap-2 px-5 py-2.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl text-white font-semibold transition-all"
           >
             <ChevronLeft size={18} /> Previous
           </button>
-          <div className="text-textSecondary">
+          <div className="text-slate-400 text-sm">
             Page <span className="text-white font-bold">{page}</span> of <span className="text-white font-bold">{totalPages}</span>
           </div>
           <button 
             onClick={() => setPage(p => Math.min(totalPages, p + 1))}
             disabled={page === totalPages || loading}
-            className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-white font-medium transition-colors"
+            className="flex items-center gap-2 px-5 py-2.5 bg-slate-800 hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl text-white font-semibold transition-all"
           >
             Next <ChevronRight size={18} />
           </button>
@@ -168,3 +174,4 @@ const MatchesPage: React.FC = () => {
 };
 
 export default MatchesPage;
+

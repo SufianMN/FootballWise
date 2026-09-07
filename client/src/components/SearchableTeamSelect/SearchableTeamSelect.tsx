@@ -103,16 +103,18 @@ const SearchableTeamSelect: React.FC<SearchableTeamSelectProps> = ({
   };
 
   return (
-    <div className="relative w-full text-white" ref={containerRef}>
+    <div className={`relative w-full text-white ${isOpen ? 'z-50' : 'z-10'}`} ref={containerRef}>
       <div 
-        className={`relative flex items-center w-full bg-background border ${isOpen ? 'border-primary ring-1 ring-primary' : 'border-slate-600'} rounded-lg transition-all shadow-sm group`}
+        className={`relative flex items-center w-full bg-slate-950/80 backdrop-blur-md border ${
+          isOpen ? 'border-blue-500 ring-2 ring-blue-500/30 shadow-lg shadow-blue-500/10' : 'border-slate-700/80 hover:border-slate-600'
+        } rounded-xl transition-all shadow-inner group`}
       >
-        <Search size={18} className={`absolute left-3 ${isOpen ? 'text-primary' : 'text-slate-400 group-hover:text-slate-300'} pointer-events-none transition-colors`} />
+        <Search size={18} className={`absolute left-3.5 ${isOpen ? 'text-blue-400' : 'text-slate-400 group-hover:text-slate-300'} pointer-events-none transition-colors`} />
         
         <input
           type="text"
-          className="w-full bg-transparent outline-none text-white p-3 pl-10 pr-10 rounded-lg cursor-text"
-          placeholder={isOpen ? "Type to search..." : placeholder}
+          className="w-full bg-transparent outline-none text-white p-3.5 pl-11 pr-11 rounded-xl cursor-text text-sm font-semibold placeholder-slate-500"
+          placeholder={isOpen ? "Type to search team..." : placeholder}
           value={isOpen ? search : (selectedTeam ? selectedTeam.name : '')}
           onChange={(e) => {
             if (!isOpen) setIsOpen(true);
@@ -128,7 +130,7 @@ const SearchableTeamSelect: React.FC<SearchableTeamSelectProps> = ({
           aria-controls="team-listbox"
         />
         
-        <ChevronDown size={18} className={`absolute right-3 ${isOpen ? 'text-primary transform rotate-180' : 'text-slate-400 group-hover:text-slate-300'} pointer-events-none transition-all`} />
+        <ChevronDown size={18} className={`absolute right-3.5 ${isOpen ? 'text-blue-400 transform rotate-180' : 'text-slate-400 group-hover:text-slate-300'} pointer-events-none transition-all`} />
       </div>
 
       {/* Dropdown list */}
@@ -137,25 +139,27 @@ const SearchableTeamSelect: React.FC<SearchableTeamSelectProps> = ({
           ref={listboxRef}
           id="team-listbox"
           role="listbox"
-          className="absolute z-50 w-full mt-2 bg-slate-800 border border-slate-600 rounded-lg shadow-2xl max-h-60 overflow-y-auto custom-scrollbar animate-fade-in"
+          className="absolute z-[100] top-full left-0 w-full mt-2 bg-slate-900/95 backdrop-blur-xl border border-slate-700/90 rounded-xl shadow-2xl shadow-slate-950/90 max-h-64 overflow-y-auto custom-scrollbar animate-fade-in divide-y divide-slate-800/50"
         >
           {filteredTeams.length === 0 ? (
-            <div className="p-4 text-slate-400 text-center italic">No teams found matching "{search}"</div>
+            <div className="p-4 text-slate-400 text-center italic text-sm">No teams found matching "{search}"</div>
           ) : (
             filteredTeams.map((team, index) => (
               <div
                 key={team.id}
                 role="option"
                 aria-selected={index === highlightedIndex}
-                className={`p-3 cursor-pointer transition-colors flex items-center justify-between ${
-                  index === highlightedIndex ? 'bg-primary/20 text-white border-l-2 border-primary' : 'text-slate-300 hover:bg-slate-700 border-l-2 border-transparent'
+                className={`p-3.5 cursor-pointer transition-all flex items-center justify-between text-sm ${
+                  index === highlightedIndex 
+                    ? 'bg-gradient-to-r from-blue-600/30 to-indigo-600/30 text-white border-l-4 border-blue-500 font-semibold' 
+                    : 'text-slate-300 hover:bg-slate-800/80 border-l-4 border-transparent'
                 }`}
                 onClick={() => handleSelect(team.id)}
                 onMouseEnter={() => setHighlightedIndex(index)}
               >
                 <span className={team.id === value ? 'font-bold text-white' : ''}>{team.name}</span>
                 {team.id === value && (
-                  <span className="text-primary text-xs font-bold bg-primary/10 px-2 py-1 rounded">Selected</span>
+                  <span className="text-xs font-bold text-indigo-300 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-indigo-500/40 px-2.5 py-0.5 rounded-full shadow-sm">Selected</span>
                 )}
               </div>
             ))
